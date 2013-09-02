@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>HANH PHUC HOSPITAL</title>
+
+		<!-- TODO : Common API -->
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/Widget.js"></script>
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/TVKeyValue.js"></script>
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/Plugin.js"></script>
+		
+		<!-- TODO : Web API v1 -->
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/deviceapis.js"></script>
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/serviceapis.js"></script>
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/webapis.js"></script>
+		
+		<!-- TODO: External Frameworks -->
+		<!--script language="javascript" type="text/javascript" src="app/javascript/jquery/jquery-1.8.2.js"></script-->
+		
+		<!-- TODO : Application Javascript code -->
+		<script language="javascript" type="text/javascript" src="javascript/media/Player.js"></script>
+        <script language="javascript" type="text/javascript" src="javascript/media/Audio.js"></script>
+        
+        <script language="javascript" type="text/javascript" src="javascript/utils/Event.js"></script>
+        <script language="javascript" type="text/javascript" src="javascript/utils/URLLoader.js"></script>
+        
+        <script language="javascript" type="text/javascript" src="javascript/Config.js"></script>
+        
+		<script language="javascript" type="text/javascript" src="javascript/Main.js"></script>
+
+		<!-- TODO : Application Style sheets code -->
+		<link rel="stylesheet" type="text/css" href="stylesheets/Main.css" >
+		
+		<object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
+        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
+        <object id='pluginObjectNNavi' border=0 classid='clsid:SAMSUNG-INFOLINK-NNAVI'></object>   
+		
+	</head>
+
+	<body onload="Main.onLoad();" onunload="Main.onUnload();">
+
+		<!-- Dummy anchor as focus for key events -->
+		<a href="javascript:void(0);" id="anchor" onkeydown="Main.keyDown();"></a>
+		
+		<!-- TODO: your code here -->
+		<div id="divSplash"style="left: 0px; top: 0px; marging: 0; padding: 0; width: 960px; height: 540px; position: absolute;">
+		    <img  width="960px" height="540px" src="images/BG.png"></img>
+		</div>
+
+        <div id="div01" style="display: none; left: 130px; top: 0px; marging: 0; padding: 0; position: absolute;">
+           <img  width="201px" height="108px" src="images/Active1.png"></img>
+        </div>
+
+        <div id="div02" style="display: none; left: 446px; top: 0px; marging: 0; padding: 0; position: absolute;">
+           <img  width="201px" height="108px" src="images/Active1.png"></img>
+        </div>
+
+         <div id="div03" style="display: none; left: 768px; top: -17px; marging: 0; padding: 0; position: absolute;">
+           <img  width="192px" height="159px" src="images/Active2.png"></img>
+        </div>
+        
+        <div id="div04" style="display: none; left: 768px; top: 105px; marging: 0; padding: 0; position: absolute;">
+           <img  width="192px" height="159px" src="images/Active2.png"></img>
+        </div>
+        
+        <div id="div05" style="display: none; left: 768px; top: 228px; marging: 0; padding: 0; position: absolute;">
+           <img  width="192px" height="159px" src="images/Active2.png"></img>
+        </div>
+        
+        <div id="div06" style="display: none; left: 768px; top: 352px; marging: 0; padding: 0; position: absolute;">
+           <img  width="192px" height="159px" src="images/Active2.png"></img>
+        </div>
+
+        <div id="divText" style="left: 0px; top: 0px; marging: 0; padding: 0; width: 960px; height: 540px; position: absolute;">
+           <img  width="960px" height="540px" src="images/Text.png"></img>
+        </div>
+   	
+   		<!-- border: 1px #FF00FF solid;  -->
+   		<p id="p01" style="position: absolute; left: 10px; top: 20px; color: #000000; text-align: center; width: 130px; font-size: 42px">000<p>
+   		
+   		<!-- border: 1px #FF00FF solid;  -->
+   		<p  id="p02" style="position: absolute; left: 325px; top: 20px; color: #000000; text-align: center; width: 130px; font-size: 42px">000<p>
+   		
+   		<!-- border: 1px #FF00FF solid;  -->
+   		<p  id="p03" style="position: absolute; left: 645px; top: 40px; color: #000000; text-align: center; width: 130px; font-size: 42px">000<p>
+   		
+   		<!-- border: 1px #FF00FF solid;  -->
+   		<p  id="p04" style="position: absolute; left: 645px; top: 160px; color: #000000; text-align: center; width: 130px; font-size: 42px">000<p>
+   		
+        <!-- border: 1px #FF00FF solid;  -->
+   		<p  id="p05" style="position: absolute; left: 645px; top: 290px; color: #000000; text-align: center; width: 130px; font-size: 42px">000<p>
+   		
+   		<!-- border: 1px #FF00FF solid;  -->
+   		<p  id="p06" style="position: absolute; left: 645px; top: 410px; color: #000000; text-align: center; width: 130px; font-size: 42px">000<p>
+   	  
+		<div style="left: 10; right: 10px; top: 490px; width: auto; height: 30px; overflow:hidden;">
+			<p style="width: 5000px;" id="message"></p>
+		</div>
+	  
+	</body>
+</html>
