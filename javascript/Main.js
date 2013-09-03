@@ -10,7 +10,7 @@ var TV = {
 	LEFT: 9,
 	TOP : 98,
 	WIDTH : 612,
-	HEIGHT : 398
+	HEIGHT : 386
 };
   
 //model
@@ -34,6 +34,11 @@ Main.onLoad = function() {
 	
 	widgetAPI.sendReadyEvent();
 	
+	// For volume OSD	
+	pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
+	pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
+	pluginAPI.unregistKey(tvKey.KEY_MUTE);
+	
 	pluginObjectNNavi = document.getElementById("pluginObjectNNavi");
     pluginObjectNNavi.SetBannerState(1);
     
@@ -46,6 +51,9 @@ Main.onLoad = function() {
 	
 		//alert("device source: " + deviceapis.tv.window.getSource().mode + " " + deviceapis.tv.window.getSource().number);
 		var channel = webapis.tv.channel.getCurrentChannel();
+		
+		//open current channel
+		webapis.tv.channel.tune({ptc: channel.ptc}, onTuneSuccess, onError, 0);
 	
 	} catch (err) { }
 	
@@ -74,12 +82,6 @@ Main.enableKeys = function()
 
 Main.keyDown = function()
 {
-//get the un-obfuscated code from the js files
-//	xhttp=new XMLHttpRequest();
-//	 xhttp.open("GET","$MANAGER_WIDGET/Common/API/TVKeyValue.js",false);
-//	 xhttp.send("");
-//	 xmlDoc=xhttp.responseText;
-//	 alert(xmlDoc);
 	 
 	var keyCode = event.keyCode;
 	alert("Key pressed: " + keyCode);
@@ -145,6 +147,17 @@ var channel = {
 		};
 		
 
+function formatNumber(value) {
+	var num = parseInt(value);	
+	if (num < 10) {
+		return '00' + num; 
+	}	
+	else if (num < 100) {
+		return '0' + num;
+	}	
+	return num;	
+}
+
 function loadConfig() {
  	var ldr = new URLLoader();
  	ldr.addEventListener(Event.COMPLETE, onGetConfigHandler);	
@@ -152,21 +165,24 @@ function loadConfig() {
 };
  	
 function onGetConfigHandler(responseText) {
- 	var obj = eval ("(" + responseText + ")");
- 	
+
+	var obj = eval ("(" + responseText + ")");
+	
+	//alert('HANHPHUC HOSPITAL: GetConfig - ' + responseText);
+	
  	//ReloadMessage
- 	ReloadMessage = parseInt(obj.ReloadMessage);
+ 	ReloadMessage = parseInt(obj.GetConfigResult.ReloadMessage * 1000);
  	ReloadMessageTimout = setTimeout(getMessage, ReloadMessage); 
  	
- 	SecondFricker = parseInt(obj.SecondFricker);
+ 	SecondFricker = 3;//parseInt(obj.GetConfigResult.SecondFricker);
  	
  	//get new records
- 	RefeshData = parseInt(obj.RefreshData);
+ 	RefeshData = 5000;//parseInt(obj.GetConfigResult.RefreshData * 1000);
  	getNewRecords();
  	
  	//show message
- 	if (obj.Message) {
- 		document.getElementById('message').innerHTML = obj.Message;
+ 	if (obj.GetConfigResult.Message) {
+ 		document.getElementById('message').innerHTML = obj.GetConfigResult.Message;
  	}
 };
   
@@ -185,8 +201,8 @@ function onGetMessageHandler(responseText) {
  	//alert('HANHPHUC HOSPITAL: GetMessage - ' + responseText);
  	
  	//show message
- 	if (obj.message) {
- 		document.getElementById('message').innerHTML = obj.message;
+ 	if (obj.GetMessageResult.message) {
+ 		document.getElementById('message').innerHTML = obj.GetMessageResult.message;
  	} 	
  	
  	ReloadMessageTimout = setTimeout(getMessage, ReloadMessage); 
@@ -198,6 +214,8 @@ function getNewRecords() {
  	var ldr = new URLLoader();
  	ldr.addEventListener(Event.COMPLETE, onGetNewRecordsHandler);	
  	ldr.load(Config.RECORDS_URL, "tv_Id=" + modelCode);	
+	
+	//param tv_Id
 };
 
 function onGetNewRecordsHandler(responseText) {
@@ -209,7 +227,7 @@ function onGetNewRecordsHandler(responseText) {
  	var DisplayId;
  	var element;
  	var fricker;
-    var len = obj.records.length;
+    var len = obj.GetNewRecordsResult.Records.length;
     var objTicker;
  	
     //reset
@@ -225,21 +243,22 @@ function onGetNewRecordsHandler(responseText) {
         fricker.style.display = 'none'; 
     }
  	
+	var tmp = obj.GetNewRecordsResult.Records;
  	for (var i = 0; i < len; i ++) {
- 		TicketNo = obj.records[i]['TicketNo'];
- 		DisplayId = obj.records[i]['DisplayId'];
+ 		TicketNo = tmp[i]['TicketNo'];
+ 		DisplayId = getRoomID(tmp[i]['DisplayId']);
  		
  		element = document.getElementById('p' + DisplayId); 		
  		fricker = document.getElementById('div' + DisplayId);
  		
  		if (element) {
- 			element.innerHTML = TicketNo;
+ 			element.innerHTML = formatNumber(TicketNo);
  			
  			if (fricker) {
  				fricker.style.display = 'block';
  			} 
             
-            objTicker = getTicker(DisplayId);
+ 			objTicker = getTicker(parseInt(DisplayId));
             if (objTicker) {
                 doFricker(objTicker);
             } 
@@ -252,6 +271,30 @@ function onGetNewRecordsHandler(responseText) {
  	
  	RefeshTimeout = setTimeout(getNewRecords, RefeshData);	
 };
+
+function getRoomID(id) {
+	if (id == Config.ROOM_1) {
+		return '01';
+	}
+	
+	else if (id == Config.ROOM_2) {
+		return '02';
+	}
+	
+	else if (id == Config.ROOM_3) {
+		return '03';
+	}
+	
+	else if (id == Config.ROOM_4) {
+		return '04';
+	}
+	
+	else if (id == Config.ROOM_5) {
+		return '05';
+	}
+	
+	return '06';	
+}
 
 function getTicker(id) {
     for (var i = 0; i < 6; i ++) {
@@ -278,7 +321,6 @@ function getMp3Path(nameFile) {
 
 function playPingPong() {	
 	var url = getMp3Path('audio/pinpong.mp3');
-	//url = 'http://dongdao.akadigital.vn/pinpong.mp3';
 	
 	Player.setVideoURL(url);
 	Player.playVideo();	
@@ -290,10 +332,14 @@ function doFricker(obj) {
 		obj.count += 1;
         
         var fricker = document.getElementById('div0' + obj.id);
+        var element = document.getElementById('p0' + obj.id); 		
+        
 		if (fricker.style.display == 'none') {
 			fricker.style.display = 'block';
+			element.style.color = '#97c11f';
 		} else {
 			fricker.style.display = 'none';
+			element.style.color = '#00adef';
 		}
 	
 		obj.timeout = setTimeout(function() {

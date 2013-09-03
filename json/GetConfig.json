@@ -1,6 +1,7 @@
-{
-Message: "This is from the GetConfig service. The timeout for reload message is 5 seconds. New message will be showed...",
-RefreshData: "10000",
-ReloadMessage: "5000",
-SecondFricker: "3"
-}
+{ GetConfigResult: {
+	Message: "This is from the GetConfig service. The timeout for reload message is 5 seconds. New message will be showed...",
+	RefreshData: "10",
+	ReloadMessage: "5",
+	SecondFricker: "3"
+	}
+}	

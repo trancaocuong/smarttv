@@ -1,8 +1,10 @@
-{records: [
-	{TicketNo: "11", DisplayId: "01"},
-	{TicketNo: "22", DisplayId: "02"},
-	{TicketNo: "33", DisplayId: "03"},
-	{TicketNo: "44", DisplayId: "04"},
-	{TicketNo: "55", DisplayId: "05"},
-	{TicketNo: "66", DisplayId: "06"}
-]}
+{GetNewRecordsResult: 
+	{Records: [
+		{TicketNo: "11", DisplayId: "01"},
+		{TicketNo: "22", DisplayId: "02"},
+		{TicketNo: "33", DisplayId: "03"},
+		{TicketNo: "44", DisplayId: "04"},
+		{TicketNo: "55", DisplayId: "05"},
+		{TicketNo: "66", DisplayId: "06"}
+	]}
+}	

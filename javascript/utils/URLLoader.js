@@ -55,6 +55,7 @@ URLLoader.prototype.load = function(url, param) {
 	
 	xmlhttp.target = this;
 	xmlhttp.onreadystatechange = function() {
+		//alert('URLLoader: ' + xmlhttp.readyState);
 		
 		if (xmlhttp.readyState && xmlhttp.readyState == 4 && xmlhttp.status && xmlhttp.status == 200) {
 			xmlhttp.target.onComplete(xmlhttp.responseText);
@@ -63,6 +64,10 @@ URLLoader.prototype.load = function(url, param) {
 	
 	//alert(url + '?' + param);
 	
-	xmlhttp.open('GET', url + "?" + param + '&random=' + Math.random(), true);
+	//xmlhttp.open('GET', url + "?" + param + '&random=' + Math.random(), true);
+	xmlhttp.open('GET', url + "?" + param, true);
 	xmlhttp.send(null);	
+	
+	//xmlhttp.open('POST', url, true);
+	//xmlhttp.send(param);	
 };
