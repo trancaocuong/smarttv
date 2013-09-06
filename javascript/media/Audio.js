@@ -21,3 +21,13 @@ Audio.setRelativeVolume = function(delta) {
 Audio.getVolume = function() {
     return this.plugin.GetVolume();
 };
+
+Audio.setUserMute = function(delta) {	
+	this.plugin.SetUserMute(delta);
+};
+
+Audio.getUserMute = function() {	
+	return this.plugin.GetUserMute();
+};
+
+

@@ -24,25 +24,45 @@ var modelCode;
 var arrFricker = [];
 var SecondFricker = 3;
 
+showHandler = function() {
+	var NNaviPlugin = document.getElementById("pluginObjectNNavi");
+	pluginAPI.SetBannerState(1);
+	NNaviPlugin.SetBannerState(2);
+	
+    pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
+	pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
+	pluginAPI.unregistKey(tvKey.KEY_MUTE);
+};
+
 Main.onLoad = function() {
 	// Enable key event processing
 	this.enableKeys();
+	
+	window.onshow = showHandler;
+	window.onShow = showHandler;
 	
 	 //Player and sound
 	Player.init();
 	Audio.init();
 	
+	userMute = Audio.getUserMute();
+	
 	widgetAPI.sendReadyEvent();
 	
 	// For volume OSD	
-	pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
-	pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
-	pluginAPI.unregistKey(tvKey.KEY_MUTE);
+	//pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
+	//pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
+	//pluginAPI.unregistKey(tvKey.KEY_MUTE);
 	
-	pluginObjectNNavi = document.getElementById("pluginObjectNNavi");
-    pluginObjectNNavi.SetBannerState(1);
-    
-	modelCode = pluginObjectNNavi.GetModelCode();
+	pluginAPI.unregistKey(tvKey.KEY_CH_UP);
+	pluginAPI.unregistKey(tvKey.KEY_PANEL_CH_UP);
+	
+	pluginAPI.unregistKey(tvKey.KEY_CH_DOWN);
+	pluginAPI.unregistKey(tvKey.KEY_PANEL_CH_DOWN);
+	
+	var networkPlugin = document.getElementById('pluginObjectNetwork');
+    var nnaviPlugin = document.getElementById('pluginObjectNNavi');
+    modelCode = nnaviPlugin.GetDUID(networkPlugin.GetHWaddr());
 	
 	//set tv signal area
 	try {
@@ -50,10 +70,10 @@ Main.onLoad = function() {
 		deviceapis.tv.window.show(0);
 	
 		//alert("device source: " + deviceapis.tv.window.getSource().mode + " " + deviceapis.tv.window.getSource().number);
-		var channel = webapis.tv.channel.getCurrentChannel();
+		//var channel = webapis.tv.channel.getCurrentChannel();
 		
 		//open current channel
-		webapis.tv.channel.tune({ptc: channel.ptc}, onTuneSuccess, onError, 0);
+		webapis.tv.channel.tuneDown(onTuneSuccess, onError, 0);
 	
 	} catch (err) { }
 	
@@ -84,38 +104,30 @@ Main.keyDown = function()
 {
 	 
 	var keyCode = event.keyCode;
-	alert("Key pressed: " + keyCode);
-	var buttonName = "Unhandled Key Code";
 	
 	switch(keyCode)
 	{
-		case tvKey.KEY_RETURN:
-		case tvKey.KEY_PANEL_RETURN:
-			buttonName = "RETURN";
-			widgetAPI.sendReturnEvent();
+		 case tvKey.KEY_VOL_UP:
+	     case tvKey.KEY_PANEL_VOL_UP:
+	    	 volumnUp();
 			break;
-		case tvKey.KEY_LEFT:
-			buttonName = "LEFT";
+			
+	     case tvKey.KEY_VOL_DOWN:
+	     case tvKey.KEY_PANEL_VOL_DOWN:
+	    	 volumnDown();
 			break;
-		case tvKey.KEY_RIGHT:
-			buttonName = "RIGHT";
-			break;
-		case tvKey.KEY_UP:
-			buttonName = "UP";
-			deviceapis.tv.channel.tuneUp(onTuneSuccess, onError, 0);
-			break;
-		case tvKey.KEY_DOWN:
-			buttonName = "DOWN";
-			deviceapis.tv.channel.tuneUp(onTuneSuccess, onError, 0);
-			break;
-		case tvKey.KEY_ENTER:
-		case tvKey.KEY_PANEL_ENTER:
-			buttonName = "ENTER";
-			break;
+			
+	     case tvKey.KEY_MUTE:
+	        volumnMute();
+	        break;	
+			
 		case tvKey.KEY_CH_UP:
+		case tvKey.KEY_PANEL_CH_UP:			
 			deviceapis.tv.channel.tuneUp(onTuneSuccess, onError, 0);
 			break;
+			
 		case tvKey.KEY_CH_DOWN:
+		case tvKey.KEY_PANEL_CH_DOWN:			
 			deviceapis.tv.channel.tuneUp(onTuneSuccess, onError, 0);
 			break;
 		default:
@@ -141,11 +153,28 @@ function onError(err)
 {
    alert("Error : " + err.message);
 };
- 
-var channel = {
-		   ptc : 50
-		};
-		
+
+function volumnUp() {
+	alert('vol up');
+	Audio.setRelativeVolume(0);
+}
+
+function volumnDown() {
+	alert('vol down');
+	Audio.setRelativeVolume(1);
+}
+
+function volumnMute() {
+	alert('vol mute');
+	
+	if (userMute == 0) {
+		userMute = 1;
+		Audio.setUserMute(1);
+	} else {
+		userMute = 0;
+		Audio.setUserMute(0);
+	}
+}
 
 function formatNumber(value) {
 	var num = parseInt(value);	
@@ -171,13 +200,16 @@ function onGetConfigHandler(responseText) {
 	//alert('HANHPHUC HOSPITAL: GetConfig - ' + responseText);
 	
  	//ReloadMessage
- 	ReloadMessage = parseInt(obj.GetConfigResult.ReloadMessage * 1000);
+ 	ReloadMessage = parseInt(obj.GetConfigResult.ReloadMessage);
  	ReloadMessageTimout = setTimeout(getMessage, ReloadMessage); 
  	
- 	SecondFricker = 3;//parseInt(obj.GetConfigResult.SecondFricker);
+ 	SecondFricker = parseInt(obj.GetConfigResult.SecondFlicker);
  	
  	//get new records
- 	RefeshData = 5000;//parseInt(obj.GetConfigResult.RefreshData * 1000);
+ 	RefeshData = parseInt(obj.GetConfigResult.RefreshData);
+ 	
+ 	//alert('CUONG ' + RefeshData);
+ 	
  	getNewRecords();
  	
  	//show message
@@ -234,13 +266,15 @@ function onGetNewRecordsHandler(responseText) {
     for (var i = 0; i < 6; i ++) {
         objTicker = arrFricker[i];
         
-        objTicker.count = 0;
-        
         clearTimeout(objTicker.timeout);
 		objTicker.timeout = null;
+        objTicker.count = 0;
         
         fricker = document.getElementById('div0' + objTicker.id);
         fricker.style.display = 'none'; 
+        
+        element = document.getElementById('p0' + objTicker.id); 		
+        element.style.color = '#00adef';
     }
  	
 	var tmp = obj.GetNewRecordsResult.Records;
@@ -259,14 +293,16 @@ function onGetNewRecordsHandler(responseText) {
  			} 
             
  			objTicker = getTicker(parseInt(DisplayId));
-            if (objTicker) {
+            if (objTicker && objTicker.count == 0) {
                 doFricker(objTicker);
             } 
  		}	
  	}
  	
  	if (len > 0) {
- 		playPingPong();
+ 		if (Player.isPlay == false) {
+ 			playPingPong();
+ 		}	
  	}
  	
  	RefeshTimeout = setTimeout(getNewRecords, RefeshData);	
@@ -322,18 +358,21 @@ function getMp3Path(nameFile) {
 function playPingPong() {	
 	var url = getMp3Path('audio/pinpong.mp3');
 	
+	//url = 'http://dongdao.akadigital.vn/pinpong.mp3';
+	
 	Player.setVideoURL(url);
 	Player.playVideo();	
 };
 
 function doFricker(obj) {
 		
+	var fricker = document.getElementById('div0' + obj.id);
+    var element = document.getElementById('p0' + obj.id);
+    
+    //alert('CUONG ' + SecondFricker + ':' + obj.id + ':' + obj.count)
 	if (obj.count < SecondFricker * 2 + 1) {
-		obj.count += 1;
-        
-        var fricker = document.getElementById('div0' + obj.id);
-        var element = document.getElementById('p0' + obj.id); 		
-        
+		obj.count = obj.count + 1;
+    
 		if (fricker.style.display == 'none') {
 			fricker.style.display = 'block';
 			element.style.color = '#97c11f';
@@ -346,10 +385,13 @@ function doFricker(obj) {
 			clearTimeout(obj.timeout);
 			obj.timeout = null;		
 			doFricker(obj);		
-		}, 1000);
+		}, 250);
 	} else {	
 		obj.count = 0;
 		clearTimeout(obj.timeout);
 		obj.timeout = null;
+		
+		fricker.style.display = 'none';
+		element.style.color = '#00adef';
 	}
 };

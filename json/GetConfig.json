@@ -1,7 +1,1 @@
-{ GetConfigResult: {
-	Message: "This is from the GetConfig service. The timeout for reload message is 5 seconds. New message will be showed...",
-	RefreshData: "10",
-	ReloadMessage: "5",
-	SecondFricker: "3"
-	}
-}	
+{"GetConfigResult":{"Message":"Thông báo khai trương cơ sở NTMK ngày 05\/09\/2013","RefreshData":3000,"ReloadMessage":50000,"SecondFlicker":3}}
