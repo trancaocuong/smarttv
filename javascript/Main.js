@@ -23,11 +23,12 @@ var ReloadMessageTimout;
 var modelCode;
 var arrFricker = [];
 var SecondFricker = 3;
+var timeoutID;
 
 showHandler = function() {
 	var NNaviPlugin = document.getElementById("pluginObjectNNavi");
 	pluginAPI.SetBannerState(1);
-	NNaviPlugin.SetBannerState(2);
+	NNaviPlugin.SetBannerState(1);
 	
     pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
 	pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
@@ -41,19 +42,14 @@ Main.onLoad = function() {
 	window.onshow = showHandler;
 	window.onShow = showHandler;
 	
-	 //Player and sound
-	Player.init();
-	Audio.init();
-	
-	userMute = Audio.getUserMute();
+	//Player and sound
+	//Player.init();
+	//Audio.init();
+	//userMute = Audio.getUserMute();
 	
 	widgetAPI.sendReadyEvent();
 	
 	// For volume OSD	
-	//pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
-	//pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
-	//pluginAPI.unregistKey(tvKey.KEY_MUTE);
-	
 	pluginAPI.unregistKey(tvKey.KEY_CH_UP);
 	pluginAPI.unregistKey(tvKey.KEY_PANEL_CH_UP);
 	
@@ -69,21 +65,14 @@ Main.onLoad = function() {
 		deviceapis.tv.window.setRect(new SRect(TV.LEFT, TV.TOP, TV.WIDTH, TV.HEIGHT));
 		deviceapis.tv.window.show(0);
 	
-		//alert("device source: " + deviceapis.tv.window.getSource().mode + " " + deviceapis.tv.window.getSource().number);
-		//var channel = webapis.tv.channel.getCurrentChannel();
-		
 		//open current channel
+		//var channel = webapis.tv.channel.getCurrentChannel();
+		//webapis.tv.channel.tune({ ptc: channel.ptc}, onTuneSuccess, onError, 0);
+	
 		webapis.tv.channel.tuneDown(onTuneSuccess, onError, 0);
 	
 	} catch (err) { }
 	
-	//webapis.tv.channel.tune({
-	//	ptc: 9,
-	//	major: 9,
-	//	minor: 0
-	//	
-	//}, onTuneSuccess, onError, 0);
-
 	for (var i = 0; i < 6; i ++) {
         arrFricker.push({count: 0, id: (i + 1)});
     }
@@ -91,18 +80,14 @@ Main.onLoad = function() {
 	loadConfig();
 };
 
-Main.onUnload = function()
-{
+Main.onUnload = function() {
 };
 
-Main.enableKeys = function()
-{
+Main.enableKeys = function() {
 	document.getElementById("anchor").focus();
 };
 
-Main.keyDown = function()
-{
-	 
+Main.keyDown = function() {
 	var keyCode = event.keyCode;
 	
 	switch(keyCode)
@@ -133,47 +118,25 @@ Main.keyDown = function()
 		default:
 			break;
 	}
-	
 };
 
-function onTuneSuccess()
-{
-	alert("tune success");
-}
-var tuneCallback = {
-   onsuccess : function() {
-      alert("Tune successfully"); },
-   onnosignal : function() {
-      alert("No Signal"); },
-   onresolutionchanged : function() {
-      alert("Resoultion changed");}
+function onTuneSuccess() {
 };
 
-function onError(err)
-{
-   alert("Error : " + err.message);
+function onError(err) {
 };
 
 function volumnUp() {
-	alert('vol up');
-	Audio.setRelativeVolume(0);
+	//Audio.setRelativeVolume(0);
 }
 
 function volumnDown() {
-	alert('vol down');
-	Audio.setRelativeVolume(1);
+	//Audio.setRelativeVolume(1);
 }
 
 function volumnMute() {
-	alert('vol mute');
-	
-	if (userMute == 0) {
-		userMute = 1;
-		Audio.setUserMute(1);
-	} else {
-		userMute = 0;
-		Audio.setUserMute(0);
-	}
+	//userMute = (userMute == 0) ? 1 : 0;
+	//Audio.setUserMute(1);
 }
 
 function formatNumber(value) {
@@ -208,15 +171,37 @@ function onGetConfigHandler(responseText) {
  	//get new records
  	RefeshData = parseInt(obj.GetConfigResult.RefreshData);
  	
- 	//alert('CUONG ' + RefeshData);
- 	
  	getNewRecords();
  	
  	//show message
- 	if (obj.GetConfigResult.Message) {
- 		document.getElementById('message').innerHTML = obj.GetConfigResult.Message;
+	if (message && obj && obj.GetConfigResult && obj.GetConfigResult.Message) {
+ 		showMessage(obj.GetConfigResult.Message);
  	}
 };
+
+function showMessage(msg) {
+	
+	var  message = document.getElementById('message');
+	if (message.innerHTML == msg || msg == '') {
+		return;
+	}
+
+	clearInterval(timeoutID);
+	timeoutID = null;
+	
+	message.style.left = '940px';
+	message.innerHTML = msg;
+	
+	timeoutID = setInterval(function() {
+		var toX = parseInt(message.style.left) - 2;		
+		var wid = $('#message').width();	
+		
+		if (toX < - wid) {
+			toX = 940;
+		}		
+		message.style.left = toX + 'px';		
+	}, 20);
+}
   
 function getMessage() {
  	clearTimeout(ReloadMessageTimout);
@@ -234,7 +219,7 @@ function onGetMessageHandler(responseText) {
  	
  	//show message
  	if (obj.GetMessageResult.message) {
- 		document.getElementById('message').innerHTML = obj.GetMessageResult.message;
+ 		showMessage(obj.GetMessageResult.message);
  	} 	
  	
  	ReloadMessageTimout = setTimeout(getMessage, ReloadMessage); 
@@ -246,8 +231,6 @@ function getNewRecords() {
  	var ldr = new URLLoader();
  	ldr.addEventListener(Event.COMPLETE, onGetNewRecordsHandler);	
  	ldr.load(Config.RECORDS_URL, "tv_Id=" + modelCode);	
-	
-	//param tv_Id
 };
 
 function onGetNewRecordsHandler(responseText) {
@@ -281,29 +264,40 @@ function onGetNewRecordsHandler(responseText) {
  	for (var i = 0; i < len; i ++) {
  		TicketNo = tmp[i]['TicketNo'];
  		DisplayId = getRoomID(tmp[i]['DisplayId']);
+		
+		if (DisplayId == '') {
+			continue;
+		}
  		
  		element = document.getElementById('p' + DisplayId); 		
  		fricker = document.getElementById('div' + DisplayId);
  		
+		if (fricker) {
+			fricker.style.display = 'block';
+ 		} 
+        		
  		if (element) {
  			element.innerHTML = formatNumber(TicketNo);
- 			
- 			if (fricker) {
- 				fricker.style.display = 'block';
- 			} 
+ 			element.style.color = '#00adef';
+			
+			objTicker = getTicker(parseInt(DisplayId));
             
- 			objTicker = getTicker(parseInt(DisplayId));
-            if (objTicker && objTicker.count == 0) {
-                doFricker(objTicker);
+			if (objTicker && objTicker.count == 0) {
+                clearTimeout(objTicker.timeout);
+				objTicker.timeout = null;
+				objTicker.count = 0;
+		
+				doFricker(objTicker);
             } 
  		}	
  	}
  	
- 	if (len > 0) {
- 		if (Player.isPlay == false) {
- 			playPingPong();
- 		}	
- 	}
+ 	//if (len > 0) {
+	//	alert('HANH PHUC HOSPITAL: Player.isPlay = ' + Player.isPlay);
+ 	//	if (Player.isPlay == false) {
+ 	//		playPingPong();
+ 	//	}	
+ 	//}
  	
  	RefeshTimeout = setTimeout(getNewRecords, RefeshData);	
 };
@@ -329,7 +323,11 @@ function getRoomID(id) {
 		return '05';
 	}
 	
-	return '06';	
+	else if (id == Config.ROOM_6) {
+		return '06';
+	}
+	
+	return '';	
 }
 
 function getTicker(id) {
@@ -356,12 +354,13 @@ function getMp3Path(nameFile) {
 };
 
 function playPingPong() {	
-	var url = getMp3Path('audio/pinpong.mp3');
+	//var url = getMp3Path('audio/pinpong.mp3');
 	
+	//test live link
 	//url = 'http://dongdao.akadigital.vn/pinpong.mp3';
 	
-	Player.setVideoURL(url);
-	Player.playVideo();	
+	//Player.setVideoURL(url);
+	//Player.playVideo();	
 };
 
 function doFricker(obj) {
@@ -369,8 +368,7 @@ function doFricker(obj) {
 	var fricker = document.getElementById('div0' + obj.id);
     var element = document.getElementById('p0' + obj.id);
     
-    //alert('CUONG ' + SecondFricker + ':' + obj.id + ':' + obj.count)
-	if (obj.count < SecondFricker * 2 + 1) {
+    if (obj.count < SecondFricker * 2 + 1) {
 		obj.count = obj.count + 1;
     
 		if (fricker.style.display == 'none') {

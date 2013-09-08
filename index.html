@@ -14,12 +14,9 @@
 		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/serviceapis.js"></script>
 		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/webapis.js"></script>
 		
-		<!-- TODO: External Frameworks -->
-		<!--script language="javascript" type="text/javascript" src="app/javascript/jquery/jquery-1.8.2.js"></script-->
-		
 		<!-- TODO : Application Javascript code -->
-		<script language="javascript" type="text/javascript" src="javascript/media/Player.js"></script>
-        <script language="javascript" type="text/javascript" src="javascript/media/Audio.js"></script>
+		<!--script language="javascript" type="text/javascript" src="javascript/media/Player.js"></script>
+        <script language="javascript" type="text/javascript" src="javascript/media/Audio.js"></script-->
         
         <script language="javascript" type="text/javascript" src="javascript/utils/Event.js"></script>
         <script language="javascript" type="text/javascript" src="javascript/utils/URLLoader.js"></script>
@@ -35,8 +32,8 @@
 		<!-- TODO : Application Style sheets code -->
 		<link rel="stylesheet" type="text/css" href="stylesheets/Main.css" >
 		
-		<object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
-        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>      
+		<!--object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
+        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object-->      
           
         <object id="pluginObjectNetwork" border="0" classid="clsid:SAMSUNG-INFOLINK-NETWORK"></object>
         
@@ -101,9 +98,14 @@
    		<!-- border: 1px #FF00FF solid;  -->
    		<p  id="p06" style="position: absolute; left: 645px; top: 395px; color: #00adef; text-align: center; width: 130px; font-size: 65px">000<p>
    	  
+		<!--
 		<div class="demo" style="left: 10; right: 10px; top: 500px; position: absolute;">
             <marquee behavior="scroll" direction="left" scrollamount="4" width="940"><span id="message" style="font-size: 28px;"></span></marquee>
         </div>
-      
+		-->
+		<div style="left: 10px; right: 10px; top: 500px; position: absolute;">
+            <!--marquee behavior="scroll" direction="left" scrollamount="4" width="940"--><p id="message" style="white-space: nowrap; position: absolute; left: 0px; font-size: 28px;"></p><!--/marquee-->
+        </div>
+		
 	</body>
 </html>

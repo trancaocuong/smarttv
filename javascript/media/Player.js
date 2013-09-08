@@ -52,6 +52,8 @@ Player.setVideoURL = function(url) {
 
 Player.playVideo = function() {
 	if (this.url != null) {
+		alert('HANH PHUC HOSPITAL: Player url = ' + this.url);
+	
         this.state = this.PLAYING;
         
         this.plugin.Stop();
@@ -59,6 +61,8 @@ Player.playVideo = function() {
 		this.plugin.Play(this.url) ;
 		
 		this.isPlay = true;
+		
+		alert('HANH PHUC HOSPITAL: Player = ' + this.plugin);
     }
 };
 

@@ -1,10 +1,10 @@
 var Config = {
 		
-	//CONFIG_URL: 'http://192.168.1.100/hpapi/QueueService.svc/GetConfig',
+	//CONFIG_URL: 'http://192.168.1.105/json/GetConfig.json',
 	
-	//MESSAGE_URL: 'http://192.168.1.100/hpapi/QueueService.svc/GetMessage',
-		
-	//RECORDS_URL: 'http://192.168.1.100/hpapi/QueueService.svc/GetNewRecords'
+	//MESSAGE_URL: 'http://192.168.1.105/json/GetMessage.json',
+	
+	//RECORDS_URL: 'http://192.168.1.105/json/GetNewRecords.json',
 		
 	CONFIG_URL: 'json/GetConfig.json',
 		
