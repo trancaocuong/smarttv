@@ -1,0 +1,22 @@
+{ 
+
+//don't change ROOM_X, can change its valua: 0X
+GetRoomsResult:[
+	//REGISTER ROOM
+	{ ROOM_1: '10'}, 
+	
+	//WEIGHT - HEIGHT ROOM
+	{ ROOM_2: '30'},
+	
+	//ROOM 1
+	{ ROOM_3: '50'},
+	
+	//ROOM 2
+	{ ROOM_4: '70'},
+	
+	//ROOM 3
+	{ ROOM_5: '90'},
+	
+	//PROCEDUCE ROOM	
+	{ ROOM_6: '100'}
+]}	

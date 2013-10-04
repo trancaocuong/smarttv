@@ -24,6 +24,7 @@ var modelCode;
 var arrFricker = [];
 var SecondFricker = 3;
 var timeoutID;
+var arrRoom = [];
 
 showHandler = function() {
 	var NNaviPlugin = document.getElementById("pluginObjectNNavi");
@@ -58,26 +59,26 @@ Main.onLoad = function() {
 	
 	var networkPlugin = document.getElementById('pluginObjectNetwork');
     var nnaviPlugin = document.getElementById('pluginObjectNNavi');
-    modelCode = nnaviPlugin.GetDUID(networkPlugin.GetHWaddr());
-	
-	//set tv signal area
+    modelCode = nnaviPlugin.GetDUID(networkPlugin.GetHWaddr()) + Math.floor(Math.random() * 1000000) / 100000;
+    
+    //set tv signal area
 	try {
 		deviceapis.tv.window.setRect(new SRect(TV.LEFT, TV.TOP, TV.WIDTH, TV.HEIGHT));
 		deviceapis.tv.window.show(0);
 	
 		//open current channel
-		//var channel = webapis.tv.channel.getCurrentChannel();
-		//webapis.tv.channel.tune({ ptc: channel.ptc}, onTuneSuccess, onError, 0);
+		var channel = webapis.tv.channel.getCurrentChannel();
+		webapis.tv.channel.tune({ ptc: channel.ptc}, onTuneSuccess, onError, 0);
 	
-		webapis.tv.channel.tuneDown(onTuneSuccess, onError, 0);
+		//webapis.tv.channel.tuneDown(onTuneSuccess, onError, 0);
 	
 	} catch (err) { }
 	
 	for (var i = 0; i < 6; i ++) {
-        arrFricker.push({count: 0, id: (i + 1)});
+        arrFricker.push({count: 0, id: (i + 1), fricker :false});
     }
 	
-	loadConfig();
+	loadRoom();
 };
 
 Main.onUnload = function() {
@@ -148,6 +149,20 @@ function formatNumber(value) {
 		return '0' + num;
 	}	
 	return num;	
+}
+
+function loadRoom() {	
+	var ldr = new URLLoader();
+ 	ldr.addEventListener(Event.COMPLETE, onGetRoomHandler);	
+ 	ldr.load(Config.ROOM_URL, "");	
+}
+
+function onGetRoomHandler(responseText) {
+	var obj = eval ("(" + responseText + ")");
+	
+	arrRoom = obj.GetRoomsResult;
+	
+	loadConfig();
 }
 
 function loadConfig() {
@@ -241,11 +256,12 @@ function onGetNewRecordsHandler(responseText) {
  	var TicketNo;
  	var DisplayId;
  	var element;
- 	var fricker;
+ 	//var fricker;
     var len = obj.GetNewRecordsResult.Records.length;
     var objTicker;
  	
     //reset
+    /*
     for (var i = 0; i < 6; i ++) {
         objTicker = arrFricker[i];
         
@@ -259,6 +275,7 @@ function onGetNewRecordsHandler(responseText) {
         element = document.getElementById('p0' + objTicker.id); 		
         element.style.color = '#00adef';
     }
+    */
  	
 	var tmp = obj.GetNewRecordsResult.Records;
  	for (var i = 0; i < len; i ++) {
@@ -270,22 +287,23 @@ function onGetNewRecordsHandler(responseText) {
 		}
  		
  		element = document.getElementById('p' + DisplayId); 		
- 		fricker = document.getElementById('div' + DisplayId);
+ 		//fricker = document.getElementById('div' + DisplayId);
  		
-		if (fricker) {
-			fricker.style.display = 'block';
- 		} 
+		//if (fricker) {
+		//	fricker.style.display = 'block';
+ 		//} 
         		
  		if (element) {
  			element.innerHTML = formatNumber(TicketNo);
  			element.style.color = '#00adef';
-			
+ 			
 			objTicker = getTicker(parseInt(DisplayId));
             
-			if (objTicker && objTicker.count == 0) {
+			if (objTicker) {
                 clearTimeout(objTicker.timeout);
 				objTicker.timeout = null;
 				objTicker.count = 0;
+				objTicker.fricker = false;
 		
 				doFricker(objTicker);
             } 
@@ -303,6 +321,17 @@ function onGetNewRecordsHandler(responseText) {
 };
 
 function getRoomID(id) {
+	
+	for (var i = 0; i < arrRoom.length; i ++) {
+		if (id == arrRoom[i]['ROOM_' + (i + 1)]) {
+			return '0' + (i + 1);
+		}
+	}
+	
+	return '';
+	
+	
+	/*
 	if (id == Config.ROOM_1) {
 		return '01';
 	}
@@ -326,6 +355,7 @@ function getRoomID(id) {
 	else if (id == Config.ROOM_6) {
 		return '06';
 	}
+	*/
 	
 	return '';	
 }
@@ -365,17 +395,19 @@ function playPingPong() {
 
 function doFricker(obj) {
 		
-	var fricker = document.getElementById('div0' + obj.id);
+	//var fricker = document.getElementById('div0' + obj.id);
     var element = document.getElementById('p0' + obj.id);
     
-    if (obj.count < SecondFricker * 2 + 1) {
+    if (obj.count < SecondFricker * 2) {
 		obj.count = obj.count + 1;
-    
-		if (fricker.style.display == 'none') {
-			fricker.style.display = 'block';
-			element.style.color = '#97c11f';
+		
+		if (obj.fricker == false) {
+			obj.fricker = true;
+			//fricker.style.display = 'block';
+			element.style.color = '#FF0000';
 		} else {
-			fricker.style.display = 'none';
+			obj.fricker = false;
+			//fricker.style.display = 'none';
 			element.style.color = '#00adef';
 		}
 	
@@ -383,13 +415,15 @@ function doFricker(obj) {
 			clearTimeout(obj.timeout);
 			obj.timeout = null;		
 			doFricker(obj);		
-		}, 250);
+		}, 330);
 	} else {	
-		obj.count = 0;
 		clearTimeout(obj.timeout);
-		obj.timeout = null;
 		
-		fricker.style.display = 'none';
+		obj.count = 0;		
+		obj.timeout = null;
+		obj.fricker = false;
+		
+		//fricker.style.display = 'none';
 		element.style.color = '#00adef';
 	}
 };

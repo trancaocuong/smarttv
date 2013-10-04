@@ -1,26 +1,18 @@
 var Config = {
 		
-	//CONFIG_URL: 'http://192.168.1.105/json/GetConfig.json',
+	//CONFIG_URL: 'http://192.168.1.105/test/GetConfig.txt',
 	
-	//MESSAGE_URL: 'http://192.168.1.105/json/GetMessage.json',
+	//MESSAGE_URL: 'http://192.168.1.105/test/GetMessage.txt',
 	
-	//RECORDS_URL: 'http://192.168.1.105/json/GetNewRecords.json',
+	//RECORDS_URL: 'http://192.168.1.105/test/GetNewRecords.txt',
 		
-	CONFIG_URL: 'json/GetConfig.json',
+	//ROOM_URL: 'http://192.168.1.105/test/GetRoom.txt',
 		
-	MESSAGE_URL: 'json/GetMessage.json',
+	CONFIG_URL: 'test/GetConfig.txt',
+		
+	MESSAGE_URL: 'test/GetMessage.txt',
 			
-	RECORDS_URL: 'json/GetNewRecords.json',
+	RECORDS_URL: 'test/GetNewRecords.txt',
 	
-	ROOM_1: '01',
-
-	ROOM_2: '02',
-			
-	ROOM_3: '03',
-	
-	ROOM_4: '04',
-	
-	ROOM_5: '05',
-	
-	ROOM_6: '06'	
+	ROOM_URL: 'test/GetRoom.txt'
 };

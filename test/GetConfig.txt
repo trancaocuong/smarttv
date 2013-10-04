@@ -1,0 +1,1 @@
+{"GetConfigResult":{"Message":"Thông báo khai trương cơ sở NTMK ngày 05\/09\/2013","RefreshData": 1000, "ReloadMessage": 5000,"SecondFlicker": 3}}
