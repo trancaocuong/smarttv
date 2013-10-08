@@ -24,8 +24,8 @@ Main.onLoad = function() {
 		Video.completeCallback = Main.onCompletePlayVideoHandler;
 	}	
 	
-	Main.onCompletePlayAudioHandler();
-	Main.onCompletePlayVideoHandler();
+	//Main.onCompletePlayAudioHandler();
+	//Main.onCompletePlayVideoHandler();
 	
 	document.getElementById("anchor").focus();
 	
@@ -45,7 +45,26 @@ Main.onLoad = function() {
 	
 	//setOffScreenSaver
 	setOffScreenSaver();	
-	setInterval(setOffScreenSaver, 10 * 60 * 1000);				
+	setInterval(setOffScreenSaver, 10 * 60 * 1000);			
+	
+	loadLyrics();
+};	
+	
+function loadLyrics() {
+ 	var ldr = new URLLoader();
+ 	ldr.addEventListener(Event.COMPLETE, onGetConfigHandler);	
+ 	ldr.load('test/lyrics.txt', "");	
+};
+	 	
+function onGetConfigHandler(responseText) {
+	//alert(responseText);
+	
+	var lines = responseText.split("\r\n");
+	
+	for (var i = 0; i < lines.length; i ++) {
+		alert('line ' + i + ": " + lines[i].split('\t')[1]);
+	}
+	
 };
 
 function setOffScreenSaver() {
@@ -76,7 +95,7 @@ onShowEvent = function() {
 	pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
 	pluginAPI.unregistKey(tvKey.KEY_MUTE);
 	
-	pluginAPI.registIMEKey();
+	//pluginAPI.registIMEKey();
 };
 
 cyclicInternetConnectionCheck = function() {
