@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>KE</title>
+
+		<script language='javascript' type='text/javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
+		<script language="javascript" type="text/javascript" src="$MANAGER_WIDGET/Common/API/Plugin.js"></script>
+        <script language='javascript' type='text/javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
+				
+		<script language="javascript" type="text/javascript" src="javascript/jquery-1.9.1.min.js"></script>
+		
+		<script language="javascript" type="text/javascript" src="javascript/media/Video.js"></script>
+		<script language="javascript" type="text/javascript" src="javascript/media/Player.js"></script>
+        <script language="javascript" type="text/javascript" src="javascript/media/Audio.js"></script>
+        
+		<script language="javascript" type="text/javascript" src="javascript/utils/InputIME.js"></script>
+		<script language="javascript" type="text/javascript" src="javascript/utils/Service.js"></script>
+		<script language="javascript" type="text/javascript" src="javascript/utils/Event.js"></script>
+		<script language="javascript" type="text/javascript" src="javascript/utils/URLLoader.js"></script>
+		<script language="javascript" type="text/javascript" src="javascript/utils/TVKey.js"></script>
+		<script language="javascript" type="text/javascript" src="javascript/utils/Point.js"></script>
+		
+		<script language="javascript" type="text/javascript" src="javascript/main.js"></script>
+		
+		<link rel="stylesheet" href="css/main.css" type="text/css">
+		
+		<object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
+		
+		<object id="pluginVideo" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
+		
+        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>      
+          
+        <object id="pluginObjectNetwork" border="0" classid="clsid:SAMSUNG-INFOLINK-NETWORK"></object>
+        
+        <object id="pluginObjectTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW" style="visibility:hidden; position:absolute; width: 0; height: 0; opacity: 0;" /></object>
+		<object id="pluginObjectNNavi" border=0 classid="clsid:SAMSUNG-INFOLINK-NNAVI" style="visibility:hidden; position:absolute; width: 0; height: 0; opacity: 0;" /></object>
+
+	</head>
+
+	<body onload="Main.onLoad();" onunload="Main.onUnload();">
+		
+		<!-- Dummy anchor as focus or blur for key events -->
+		<a href='javascript:void(0);' id='anchor' onkeydown='Main.onKeyHandler(event);'></a>
+	
+		<!-- IME source -->
+		<!--script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/IME/ime2.js"></script-->
+		
+	</body>
+</html>

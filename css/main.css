@@ -1,0 +1,91 @@
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    position: relative;
+}
+	
+body {
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    position: fixed;
+    overflow: hidden;
+	width: 960px; 
+    height: 540px;
+	color:#FFFFFF;
+}
+
+.divMask11 {
+    width: 140px;
+    height: 100px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask12 {
+    width: 112px;
+    height: 80px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask13 {
+    width: 84px;
+    height: 60px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask21 {
+    width: 180px;
+    height: 129px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask22 {
+    width: 144px;
+    height: 103px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask23 {
+    width: 108px;
+    height: 77px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+
+.divMask31 {
+    width: 140px;
+    height: 100px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask32 {
+    width: 112px;
+    height: 80px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
+
+.divMask33 {
+    width: 84px;
+    height: 60px;
+    overflow: hidden;
+    color: #ffffff;
+    position: absolute;
+}
