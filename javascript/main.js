@@ -62,6 +62,9 @@ function onGetConfigHandler(responseText) {
 		dataProvider.addLineData(lines[i]);
 	}
 	
+	Main.start();
+	
+	/*
 	var count = 0;
 	var total = dataProvider.getTotalLines();
 	
@@ -76,7 +79,7 @@ function onGetConfigHandler(responseText) {
 		count ++;
 		
 	}, 500);
-	
+	*/
 	//Main.onCompletePlayAudioHandler();
 	//Main.onCompletePlayVideoHandler();
 };
@@ -242,4 +245,38 @@ Main.exitApp = function() {
 
 Main.returnApp = function() {
 	widgetAPI.sendReturnEvent();
+};
+
+Main.start = function() {
+	var numDisplayLines = 2; 
+
+
+	var timings = dataProvider.toArray();
+
+	var isScrubbing = false;
+	var show = null;
+	var lastPosition = 0;
+
+	function init() {
+		// Create the karaoke engine and get a show instance
+		var karaoke = new RiceKaraoke(RiceKaraoke.simpleTimingToTiming(timings));
+		var renderer = new SimpleKaraokeDisplayEngine('karaoke-display', numDisplayLines);
+		show = karaoke.createShow(renderer, numDisplayLines);
+
+		
+		var count = 0;
+		setInterval(function() {
+			 if (this.position < lastPosition) {
+				show.reset();
+			}
+				
+			show.render(count * 104 / 1000, isScrubbing);
+			lastPosition = count * 104;
+			
+			count ++;
+		}, 104);
+		
+	}
+
+	init();
 };

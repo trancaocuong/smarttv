@@ -42,3 +42,13 @@ LyricsDataProvider.prototype.getLyricsLineAt = function(time) {
 	}
 	return null;
 };
+
+LyricsDataProvider.prototype.toArray = function(time) {	
+	var arr = [];
+	var line;
+	for (var i = 0; i < this.arrLine.length; i ++) {
+		line = this.arrLine[i].toArray();
+		arr.push(line);
+	}
+	return arr;
+}
