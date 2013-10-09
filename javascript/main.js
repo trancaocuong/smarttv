@@ -3,6 +3,7 @@ var pluginAPI 	= new Common.API.Plugin();
 var tvKey 		= new Common.API.TVKeyValue();
 
 var Main = {};
+var dataProvider = new LyricsDataProvider();
 
 Main.onUnload = function() {	
 	if (Player) {
@@ -23,9 +24,6 @@ Main.onLoad = function() {
 		Player.completeCallback = Main.onCompletePlayAudioHandler;
 		Video.completeCallback = Main.onCompletePlayVideoHandler;
 	}	
-	
-	//Main.onCompletePlayAudioHandler();
-	//Main.onCompletePlayVideoHandler();
 	
 	document.getElementById("anchor").focus();
 	
@@ -59,12 +57,28 @@ function loadLyrics() {
 function onGetConfigHandler(responseText) {
 	//alert(responseText);
 	
-	var lines = responseText.split("\r\n");
-	
+	var lines = responseText.split("\r\n");	
 	for (var i = 0; i < lines.length; i ++) {
-		alert('line ' + i + ": " + lines[i].split('\t')[1]);
+		dataProvider.addLineData(lines[i]);
 	}
 	
+	var count = 0;
+	var total = dataProvider.getTotalLines();
+	
+	setInterval(function() {
+		
+		var line = dataProvider.getLyricsLineAt(count * 500);
+		
+		if (line) {
+			document.getElementById('test').innerHTML = line.getContent();			
+		}
+		
+		count ++;
+		
+	}, 500);
+	
+	//Main.onCompletePlayAudioHandler();
+	//Main.onCompletePlayVideoHandler();
 };
 
 function setOffScreenSaver() {
