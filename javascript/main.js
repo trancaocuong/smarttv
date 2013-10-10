@@ -62,8 +62,6 @@ function onGetConfigHandler(responseText) {
 		dataProvider.addLineData(lines[i]);
 	}
 	
-	Main.start();
-	
 	/*
 	var count = 0;
 	var total = dataProvider.getTotalLines();
@@ -80,8 +78,12 @@ function onGetConfigHandler(responseText) {
 		
 	}, 500);
 	*/
-	//Main.onCompletePlayAudioHandler();
-	//Main.onCompletePlayVideoHandler();
+	Main.onCompletePlayAudioHandler();
+	Main.onCompletePlayVideoHandler();
+    
+    Main.start();
+	
+	
 };
 
 function setOffScreenSaver() {
