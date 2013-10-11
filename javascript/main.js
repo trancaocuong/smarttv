@@ -78,11 +78,14 @@ function onGetConfigHandler(responseText) {
 		
 	}, 500);
 	*/
-	Main.onCompletePlayAudioHandler();
-	Main.onCompletePlayVideoHandler();
+	
+	//Main.onCompletePlayVideoHandler();
+    
+    
     
     Main.start();
 	
+    setTimeout(Main.onCompletePlayAudioHandler, 2000);
 	
 };
 
@@ -250,35 +253,26 @@ Main.returnApp = function() {
 };
 
 Main.start = function() {
-	var numDisplayLines = 2; 
-
-
 	var timings = dataProvider.toArray();
 
-	var isScrubbing = false;
-	var show = null;
-	var lastPosition = 0;
+	var karaoke = new RiceKaraoke(RiceKaraoke.simpleTimingToTiming(timings));
+	var renderer = new KaraokeDisplayEngine('karaoke-display', 2);
+	var show = karaoke.createShow(renderer, 2);
 
-	function init() {
-		// Create the karaoke engine and get a show instance
-		var karaoke = new RiceKaraoke(RiceKaraoke.simpleTimingToTiming(timings));
-		var renderer = new SimpleKaraokeDisplayEngine('karaoke-display', numDisplayLines);
-		show = karaoke.createShow(renderer, numDisplayLines);
-
-		
-		var count = 0;
-		setInterval(function() {
-			 if (this.position < lastPosition) {
-				show.reset();
-			}
-				
-			show.render(count * 104 / 1000, isScrubbing);
-			lastPosition = count * 104;
-			
-			count ++;
-		}, 104);
-		
-	}
-
-	init();
+	var count = 0;
+    var delay = 100;
+    var lastPosition = 0;
+    
+    setInterval(function() {
+         if (this.position < lastPosition) {
+            show.reset();
+        }
+        
+        //alert(count * delay / 1000);
+            
+        show.render(count * delay / 1000, false);
+        lastPosition = count * delay;
+        
+        count ++;
+    }, delay);	
 };

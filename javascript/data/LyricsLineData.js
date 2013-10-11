@@ -37,7 +37,15 @@ LyricsLineData.prototype.contains = function(time) {
 };
 
 LyricsLineData.prototype.toArray = function() {
-	var arr = [this.from()/1000, this.to()/1000];	
+    
+    var from = this.from()/1000;
+    from = Math.floor(from * 1000) / 1000;
+    
+    var to = this.to()/1000;
+    to = Math.floor(to * 1000) / 1000;
+
+	var arr = [from, to];	    
+    var current;
 	
 	var arrTemp = [];
 	var time = 0;
@@ -47,7 +55,10 @@ LyricsLineData.prototype.toArray = function() {
 			time = this.arrLyrics[i].getTime() - time;
 		}
 		
-		arrTemp.push([time/1000, this.arrLyrics[i].getText() + ' ']);
+        current = time/1000;
+        current = Math.floor(current * 1000) / 1000;
+        
+		arrTemp.push([current, this.arrLyrics[i].getText() + ' ']);
 		
 		time = this.arrLyrics[i].getTime();
 	}
