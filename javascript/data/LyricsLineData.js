@@ -50,8 +50,9 @@ LyricsLineData.prototype.toArray = function() {
 	var arrTemp = [];
 	var time = 0;
 	for (var i = 0; i < this.arrLyrics.length; i ++) {
-		
-		if (time != 0) {
+		if (i == 0) {
+            time = 0;
+        } else {
 			time = this.arrLyrics[i].getTime() - time;
 		}
 		
@@ -61,7 +62,12 @@ LyricsLineData.prototype.toArray = function() {
 		arrTemp.push([current, this.arrLyrics[i].getText() + ' ']);
 		
 		time = this.arrLyrics[i].getTime();
+        
+       // alert(this.arrLyrics[i].getTime());
+        //alert(current);
 	}
+    
+    //alert('');
 	
 	arr.push(arrTemp);
 	

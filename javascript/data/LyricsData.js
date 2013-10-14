@@ -8,7 +8,7 @@ function LyricsData(value) {
         time = Math.floor(time * 1000) / 1000;
     }
     
-    alert(time);
+    //alert(time);
     
 	var text = arrStr.length > 1 ? $.trim(arrStr[1]) : '';
 	

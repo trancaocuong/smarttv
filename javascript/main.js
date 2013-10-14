@@ -255,7 +255,7 @@ Main.returnApp = function() {
 Main.start = function() {
 	var timings = dataProvider.toArray();
 
-	var karaoke = new RiceKaraoke(RiceKaraoke.simpleTimingToTiming(timings));
+	var karaoke = new RiceKaraoke(RiceKaraoke.toTiming(timings));
 	var renderer = new KaraokeDisplayEngine('karaoke-display', 2);
 	var show = karaoke.createShow(renderer, 2);
 
@@ -270,7 +270,7 @@ Main.start = function() {
         
         //alert(count * delay / 1000);
             
-        show.render(count * delay / 1000, false);
+        show.render(count * delay / 1000);
         lastPosition = count * delay;
         
         count ++;
