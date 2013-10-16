@@ -61,33 +61,17 @@ function onGetConfigHandler(responseText) {
 	for (var i = 0; i < lines.length; i ++) {
 		dataProvider.addLineData(lines[i]);
 	}
-	
-	/*
-	var count = 0;
-	var total = dataProvider.getTotalLines();
-	
-	setInterval(function() {
-		
-		var line = dataProvider.getLyricsLineAt(count * 500);
-		
-		if (line) {
-			document.getElementById('test').innerHTML = line.getContent();			
-		}
-		
-		count ++;
-		
-	}, 500);
-	*/
-	
-	//Main.onCompletePlayVideoHandler();
     
-    
-    
-    Main.start();
+    Main.start();	
+    setTimeout(startAudioAndVideo, 2000);
 	
-    setTimeout(Main.onCompletePlayAudioHandler, 2000);
-	
+
 };
+
+function startAudioAndVideo() {
+    Main.onCompletePlayAudioHandler();
+    Main.onCompletePlayVideoHandler();
+}
 
 function setOffScreenSaver() {
 	pluginAPI.setOffScreenSaver();
@@ -189,7 +173,8 @@ Main.onCompletePlayAudioHandler = function() {
 };
 
 Main.onCompletePlayVideoHandler = function() {	
-	var url = 'http://vio.akadigital.vn/MP4.mp4';	
+	//var url = 'http://vio.akadigital.vn/MP4.mp4';
+	var url = 'http://kchat.akadigital.vn:90/karaoke1.mp4';
 	Video.setVideoURL(url);
 	Video.playVideo();
 };
@@ -268,8 +253,6 @@ Main.start = function() {
             show.reset();
         }
         
-        //alert(count * delay / 1000);
-            
         show.render(count * delay / 1000);
         lastPosition = count * delay;
         

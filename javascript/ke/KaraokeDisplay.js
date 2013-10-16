@@ -112,20 +112,22 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
     var pos=innerElement.position();
     var innerElementLeft=pos.left;
     var elementHeight=this._element.height();
+   
+    //show hight light text
     this._removeOverlay();
     
-    var overlay=jQuery(document.createElement('div'));
-    overlay.attr('class','karaoke-overlay');
+    var overlay = jQuery(document.createElement('div'));
+    overlay.attr('class', 'karaoke-overlay');
     overlay.text(passedText + current.text);
-    overlay.css('position','relative');
-    overlay.css('white-space','nowrap');
-    overlay.css('overflow','hidden');
-    overlay.width(passedTextWidth+(fragmentPercent/100*currentTextWidth));
-    overlay.css('margin-top','-'+ elementHeight+'px');
-    overlay.css('visibility','hidden');
+    overlay.css('position', 'relative');
+    overlay.css('white-space', 'nowrap');
+    overlay.css('overflow', 'hidden');
+    overlay.width(passedTextWidth + (fragmentPercent/100 * currentTextWidth));
+    overlay.css('margin-top', '-' + elementHeight + 'px');
+    overlay.css('visibility', 'hidden');
     
     this._display.append(overlay);
-    overlay.css('left',innerElementLeft- overlay.position().left);
-    overlay.css('visibility','');
-    this._overlay=overlay;
+    overlay.css('left', innerElementLeft - overlay.position().left);
+    overlay.css('visibility', '');
+    this._overlay = overlay;
 };
