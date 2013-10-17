@@ -76,7 +76,8 @@ KaraokeDisplay.prototype.renderInstrumental = function(){
 };
 
 KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fragmentPercent) {
-    var passedText = '';
+	
+	var passedText = '';
     for(var i in passed) { 
         passedText += passed[i].text;
     }
@@ -87,31 +88,28 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
     }
     
     var content = passedText + current.text + upcomingText;
-    
     var strippedCurrentText = current.text.replace(/^\s+/,'');
     
-    var m;
-    if( m = current.text.match(/^\s+/)){
-        passedText += m[0];
-    }
     this._setClass();
     
     var test = jQuery('<div style="display: inline; visibility: hidden; '+'margin: 0; padding: 0; border: 0"></div>');
     this._element.parent().append(test);
     
-    var totalTextWidth = test.text(content).width();
-    
+    var totalTextWidth = test.text(content).width();    
     var passedTextWidth = test.text(passedText).width();
     var currentTextWidth = test.text(strippedCurrentText).width();
+    
     test.remove();
     
-    this._element.empty();
     var innerElement = jQuery(document.createElement('span'));
     innerElement.text(content);
+    
+    this._element.empty();
     this._element.append(innerElement);
-    var pos=innerElement.position();
-    var innerElementLeft=pos.left;
-    var elementHeight=this._element.height();
+            
+    var pos = innerElement.position();
+    var innerElementLeft = pos.left;
+    var elementHeight = this._element.height();
    
     //show hight light text
     this._removeOverlay();
@@ -122,6 +120,9 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
     overlay.css('position', 'relative');
     overlay.css('white-space', 'nowrap');
     overlay.css('overflow', 'hidden');
+    
+    //fragmentPercent = 100;
+    
     overlay.width(passedTextWidth + (fragmentPercent/100 * currentTextWidth));
     overlay.css('margin-top', '-' + elementHeight + 'px');
     overlay.css('visibility', 'hidden');
@@ -129,5 +130,5 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
     this._display.append(overlay);
     overlay.css('left', innerElementLeft - overlay.position().left);
     overlay.css('visibility', '');
-    this._overlay = overlay;
+    this._overlay = overlay;   
 };

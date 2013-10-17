@@ -51,4 +51,4 @@ LyricsDataProvider.prototype.toArray = function(time) {
 		arr.push(line);
 	}
 	return arr;
-}
+};

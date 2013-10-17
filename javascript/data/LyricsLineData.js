@@ -49,11 +49,14 @@ LyricsLineData.prototype.toArray = function() {
 	
 	var arrTemp = [];
 	var time = 0;
+	var start = 0;
+	
 	for (var i = 0; i < this.arrLyrics.length; i ++) {
 		if (i == 0) {
             time = 0;
+            start = this.arrLyrics[i].getTime();
         } else {
-			time = this.arrLyrics[i].getTime() - time;
+			time = this.arrLyrics[i].getTime() - start;
 		}
 		
         current = time/1000;
@@ -61,16 +64,11 @@ LyricsLineData.prototype.toArray = function() {
         
 		arrTemp.push([current, this.arrLyrics[i].getText() + ' ']);
 		
-		time = this.arrLyrics[i].getTime();
-        
-       // alert(this.arrLyrics[i].getTime());
-        //alert(current);
+		time = this.arrLyrics[i].getTime();        
 	}
     
-    //alert('');
-	
-	arr.push(arrTemp);
-	
+    arr.push(arrTemp);
+    
 	return arr;	
 };
 

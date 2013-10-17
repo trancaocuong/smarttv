@@ -2,6 +2,7 @@ var Player = {
     plugin : null,
     state : -1,
     skipState : -1,
+    progressCallback : null,    /* Callback function to be set by client */
     completeCallback : null,    /* Callback function to be set by client */
     originalSource : null,
     
@@ -36,6 +37,8 @@ Player.init = function(playerID) {
     this.plugin.OnConnectionFailed = 'Player.ConnectionFailed';
     this.plugin.OnStreamNotFound = 'Player.StreamNotFound';
     this.plugin.OnRenderingComplete = 'Player.OnRenderingComplete';     
+    
+    this.plugin.OnCurrentPlayTime = 'Player.OnCurrentPlayTime';
     
     return success;
 };
@@ -120,6 +123,15 @@ Player.OnRenderingComplete = function() {
     }
 	this.isPlay = false;
 };
+
+Player.OnCurrentPlayTime = function(time) {	
+	if (this.progressCallback) {
+		this.progressCallback(time);
+    }
+};
+
+
+
 
 Player.NetworkDisconnected = function() {
 	this.isPlay = false;

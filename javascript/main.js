@@ -64,8 +64,6 @@ function onGetConfigHandler(responseText) {
     
     Main.start();	
     setTimeout(startAudioAndVideo, 2000);
-	
-
 };
 
 function startAudioAndVideo() {

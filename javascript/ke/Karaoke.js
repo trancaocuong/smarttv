@@ -11,8 +11,8 @@ RiceKaraoke.toTiming = function(lines) {
 	var arrResult = [];
 	var count = 0;
 	
-    for(var i in lines){            
-        arrResult[count++]= {
+    for(var i in lines){     
+    	arrResult[count++]= {
             start: lines[i][0],
             end: lines[i][1],
             line: RiceKaraoke.toLine(lines[i][2]),
@@ -27,7 +27,7 @@ RiceKaraoke.toLine = function(arrWord) {
     var count = 0;
     
     for(var i in arrWord){
-        arrResult[count++] = {
+    	arrResult[count++] = {
             start: arrWord[i][0],
             text: arrWord[i][1],
             end: arrWord[i].length >= 3 ? parseFloat(arrWord[i][2]) : null,
@@ -215,19 +215,24 @@ KaraokeLine.prototype.update = function(elapsed){
         fragment = this._timing.line[l];
         
         if(this._timing.start + fragment.start <= elapsed){
-            if(currentFragment != null){
+        	
+            if(currentFragment != null) {
                 passedFragments[passedFragments.length] = currentFragment;
             }
             currentFragment = fragment;
             
             fragmentEnd = this._timing.line.end ? this._timing.line.end : (this._timing.line.length > l + 1 ? this._timing.line[l + 1].start : this._timing.end - this._timing.start);
             
-            currentFragmentPercent = (elapsed - (this._timing.start + fragment.start))/(fragmentEnd - fragment.start) * 100;
+            currentFragmentPercent = 10 + (elapsed - (this._timing.start + fragment.start))/(fragmentEnd - fragment.start) * 100;
             
         } else {
             upcomingFragments[upcomingFragments.length] = fragment;
         }
     }
+    
+    if (currentFragmentPercent > 100) {
+    	currentFragmentPercent = 100;
+    }	
     
     this._display.renderKaraoke(passedFragments, currentFragment, upcomingFragments, currentFragmentPercent);
     return true;
