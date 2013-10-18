@@ -6,6 +6,9 @@ var Player = {
     completeCallback : null,    /* Callback function to be set by client */
     originalSource : null,
     
+    dispatchBuffer: false,
+    bufferCallback: null,
+    
     isPlay: false,
     
     STOPPED : 0,
@@ -29,9 +32,9 @@ Player.init = function(playerID) {
     
     //this.plugin.OnCurrentPlayTime = Player.setCurTime;
     //this.plugin.OnStreamInfoReady = Player.setTotalTime;
-    //this.plugin.OnBufferingStart = Player.onBufferingStart;
-    //this.plugin.OnBufferingProgress = Player.onBufferingProgress;
-    //this.plugin.OnBufferingComplete = Player.onBufferingComplete;     
+    this.plugin.OnBufferingStart = 'Player.onBufferingStart';
+    this.plugin.OnBufferingProgress = 'Player.onBufferingProgress';
+    this.plugin.OnBufferingComplete = 'Player.onBufferingComplete';     
     
     this.plugin.OnNetworkDisconnected = 'Player.NetworkDisconnected';    
     this.plugin.OnConnectionFailed = 'Player.ConnectionFailed';
@@ -65,6 +68,12 @@ Player.playVideo = function() {
     }
 };
 
+Player.resumeVideo = function() {
+    this.state = this.PLAYING;
+    this.plugin.Resume();
+};
+
+
 Player.pauseVideo = function() {
     this.state = this.PAUSED;
     this.plugin.Pause();
@@ -77,10 +86,6 @@ Player.stopVideo = function() {
     }
 };
 
-Player.resumeVideo = function() {
-    this.state = this.PLAYING;
-    this.plugin.Resume();
-};
 
 Player.skipForwardVideo = function() {
     this.skipState = this.FORWARD;
@@ -98,15 +103,20 @@ Player.getState = function() {
 
 // Global functions called directly by the player 
 Player.onBufferingStart = function() {
-    
+	//alert('start buffering...');
 };
 
 Player.onBufferingProgress = function(percent) {
-    
+	//alert('...buffering...');
 };
 
 Player.onBufferingComplete = function() {
-    
+	//alert('complete buffering...');
+	
+	if (this.dispatchBuffer == false) {
+		this.dispatchBuffer = true;
+		this.bufferCallback();
+	}
 };
 
 Player.setCurTime = function(time) {
@@ -129,9 +139,6 @@ Player.OnCurrentPlayTime = function(time) {
 		this.progressCallback(time);
     }
 };
-
-
-
 
 Player.NetworkDisconnected = function() {
 	this.isPlay = false;

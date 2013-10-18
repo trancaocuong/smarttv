@@ -22,6 +22,9 @@ Main.onLoad = function() {
 	//auto loop sound
 	if (Video.init('pluginVideo') && Player.init('pluginPlayer') && Audio.init()) {
 		Player.completeCallback = Main.onCompletePlayAudioHandler;
+		Player.progressCallback = Main.onPlayingAudioHandler;
+		Player.bufferCallback = Main.onBufferCompleteHandler;
+		
 		Video.completeCallback = Main.onCompletePlayVideoHandler;
 	}	
 	
@@ -62,13 +65,17 @@ function onGetConfigHandler(responseText) {
 		dataProvider.addLineData(lines[i]);
 	}
     
-    Main.start();	
-    setTimeout(startAudioAndVideo, 2000);
+    Main.initKaraoke();	
+    Main.onCompletePlayAudioHandler();
+    Main.onCompletePlayVideoHandler();
+};
+
+Main.onBufferCompleteHandler = function() {
+	Main.startLyrics();
 };
 
 function startAudioAndVideo() {
-    Main.onCompletePlayAudioHandler();
-    Main.onCompletePlayVideoHandler();
+        
 }
 
 function setOffScreenSaver() {
@@ -172,9 +179,9 @@ Main.onCompletePlayAudioHandler = function() {
 
 Main.onCompletePlayVideoHandler = function() {	
 	//var url = 'http://vio.akadigital.vn/MP4.mp4';
-	var url = 'http://kchat.akadigital.vn:90/karaoke1.mp4';
-	Video.setVideoURL(url);
-	Video.playVideo();
+	//var url = 'http://kchat.akadigital.vn:90/karaoke1.mp4';
+	//Video.setVideoURL(url);
+	//Video.playVideo();
 };
 
 Main.onKeyHandler = function(event) {
@@ -235,24 +242,38 @@ Main.returnApp = function() {
 	widgetAPI.sendReturnEvent();
 };
 
-Main.start = function() {
+var karaoke;
+var renderer;
+var show;
+
+Main.initKaraoke = function() {
 	var timings = dataProvider.toArray();
 
-	var karaoke = new RiceKaraoke(RiceKaraoke.toTiming(timings));
-	var renderer = new KaraokeDisplayEngine('karaoke-display', 2);
-	var show = karaoke.createShow(renderer, 2);
+	karaoke = new RiceKaraoke(RiceKaraoke.toTiming(timings));
+	renderer = new KaraokeDisplayEngine('karaoke-display', 2);
+	show = karaoke.createShow(renderer, 2);
+};
 
+Main.onPlayingAudioHandler = function(time) {
+	show.render(time / 1000);
+};
+
+
+Main.startLyrics = function() {
+	
 	var count = 0;
-    var delay = 100;
-    var lastPosition = 0;
+    var delay = 50;
+    //var lastPosition = 0;
     
     setInterval(function() {
-         if (this.position < lastPosition) {
-            show.reset();
-        }
+        //if (this.position < lastPosition) {
+        //    show.reset();
+        //}
         
-        show.render(count * delay / 1000);
-        lastPosition = count * delay;
+        //show.render(count * delay / 1000);
+        //lastPosition = count * delay;
+        
+        //alert(count * delay / 1000);
         
         count ++;
     }, delay);	

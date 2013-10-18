@@ -36,9 +36,9 @@ LyricsLineData.prototype.contains = function(time) {
 	return (time >= min && time <= max);	
 };
 
-LyricsLineData.prototype.toArray = function() {
-    
-    var from = this.from()/1000;
+LyricsLineData.prototype.toArray = function(previous) {
+	
+	var from = this.from()/1000;
     from = Math.floor(from * 1000) / 1000;
     
     var to = this.to()/1000;
@@ -59,10 +59,17 @@ LyricsLineData.prototype.toArray = function() {
 			time = this.arrLyrics[i].getTime() - start;
 		}
 		
-        current = time/1000;
-        current = Math.floor(current * 1000) / 1000;
         
-		arrTemp.push([current, this.arrLyrics[i].getText() + ' ']);
+		//if (i == this.arrLyrics.length - 1 && previous) {       
+		//	time = previous.from() - start;
+			
+		//	alert(time);
+        //}
+		
+		current = time/1000;
+        current = Math.floor(current * 1000) / 1000;
+        	
+        arrTemp.push([current, this.arrLyrics[i].getText() + ' ']);
 		
 		time = this.arrLyrics[i].getTime();        
 	}

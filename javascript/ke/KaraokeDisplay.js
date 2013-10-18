@@ -121,7 +121,11 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
     overlay.css('white-space', 'nowrap');
     overlay.css('overflow', 'hidden');
     
+    //alert(passedText + current.text);
+    
     //fragmentPercent = 100;
+    
+    //alert(passedTextWidth + (fragmentPercent/100 * currentTextWidth) + ':'  + currentTextWidth);
     
     overlay.width(passedTextWidth + (fragmentPercent/100 * currentTextWidth));
     overlay.css('margin-top', '-' + elementHeight + 'px');
