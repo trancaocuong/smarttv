@@ -5,7 +5,7 @@ function LyricsData(value) {
 	var time = arrStr.length > 0 ? arrStr[0] : null;
     
     if (time) {
-        time = Math.floor(time * 1000) / 1000;
+        time = Math.floor(time * 100) / 100;
     }
     
     //alert(time);

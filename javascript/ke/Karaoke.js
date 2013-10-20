@@ -1,33 +1,59 @@
-﻿function RiceKaraoke(timings) {
+﻿function Karaoke(timings) {
 
-	this.timings = timings.sort(function(a, b) {
-		if(a.start == b.start){
+    timings = KaraokeUtils.toTiming(timings);
+
+	this.timings = timings;/*.sort(function(a, b) {
+        if(a.start == b.start){
 			return 0;
 		}
-		return a.start < b.start ? -1 : 1;
+        return a.start < b.start ? -1 : 1;
 	});
-}
-RiceKaraoke.toTiming = function(lines) {
-	var arrResult = [];
-	var count = 0;
-	
-    for(var i in lines){     
-    	arrResult[count++]= {
-            start: lines[i][0],
-            end: lines[i][1],
-            line: RiceKaraoke.toLine(lines[i][2]),
-            renderOptions: lines[i].length >= 4 ? lines[i][3] : {}
-         };
-	}
-	return arrResult;
+    */
+
+    this.show = null;
 };
 
-RiceKaraoke.toLine = function(arrWord) {
-	var arrResult = [];
+Karaoke.prototype.init = function(displayId, numLines){    
+    var renderer = new KaraokeDisplayEngine(displayId, numLines);
+
+    this.show = new KaraokeShow(this, renderer, numLines);
+};
+
+Karaoke.prototype.render = function(elapsed){
+    this.show.render(elapsed);
+};
+
+
+/****************************************************************
+//
+// KaraokeUtils
+//
+****************************************************************/
+function KaraokeUtils(){
+
+};
+
+KaraokeUtils.toTiming = function(lines) {
+    var arrResult = [];
+    var count = 0;
+    
+    for(var i in lines){     
+        arrResult[count++]= {
+            start: lines[i][0],
+            end: lines[i][1],
+            line: KaraokeUtils.toLine(lines[i][2]),
+            renderOptions: lines[i].length >= 4 ? lines[i][3] : {}
+         };
+    }
+    return arrResult;
+};
+
+KaraokeUtils.toLine = function(arrWord) {
+    var arrResult = [];
     var count = 0;
     
     for(var i in arrWord){
-    	arrResult[count++] = {
+        arrResult[count++] = {
             start: arrWord[i][0],
             text: arrWord[i][1],
             end: arrWord[i].length >= 3 ? parseFloat(arrWord[i][2]) : null,
@@ -38,11 +64,12 @@ RiceKaraoke.toLine = function(arrWord) {
     return arrResult;
 };
 
-RiceKaraoke.prototype.createShow = function(displayEngine, numLines){
-    return new RiceKaraokeShow(this, displayEngine, numLines);
-};
-
-function RiceKaraokeShow(engine, displayEngine, numLines) {
+/****************************************************************
+//
+// KaraokeShow
+//
+****************************************************************/
+function KaraokeShow(engine, displayEngine, numLines) {
     this.showReady = true;
     this.showInstrumental = true;
     this.upcomingThreshold = 5;
@@ -60,7 +87,7 @@ function RiceKaraokeShow(engine, displayEngine, numLines) {
     this.reset();
 }
 
-RiceKaraokeShow.prototype.reset = function(){
+KaraokeShow.prototype.reset = function(){
     this._displays = [];
     for(var i = 0; i < this._numLines; i ++){
         this._displays[this._displays.length] = null;
@@ -73,43 +100,49 @@ RiceKaraokeShow.prototype.reset = function(){
     this._hasInstrumentalLine = false;
 };
 
-RiceKaraokeShow.prototype.render = function(elapsed) {
+KaraokeShow.prototype.render = function(elapsed) {
 
     var freeDisplays = [];
     var displaysToClear = [];
     var unfreedDisplays = {};
     var displaysToUpdate = [];
     
+    var replacement;
+
+    //alert('');
+    
     for(var i in this._displays) {
-        if(this._displays[i] == null){
-            freeDisplays[freeDisplays.length] = i;
+
+        if(this._displays[i] == null) {
+            freeDisplays.push(i);
         }
         
         else if(this._displays[i].end <= elapsed) {
-            if(this._displays[i] instanceof KaraokeReadyLine){
+            
+            //alert(this._displays[i].end + ' ---- ' + elapsed );    
+            
+            if(this._displays[i] instanceof KaraokeReadyLine) {
                 this._hasReadyLine = false;
             }
             
-            if(this._displays[i]instanceof KaraokeInstrumentalLine) {
+            if(this._displays[i] instanceof KaraokeInstrumentalLine) {
                 this._hasInstrumentalLine = false;
             }
             
-            var replacement = this._displays[i].expire(elapsed);
+            replacement = this._displays[i].expire(elapsed);
             
             if(replacement != null) {
                 this._displays[i] = replacement;
             } else {
-                freeDisplays[freeDisplays.length] = i;
-                displaysToClear[displaysToClear.length] = i;
+                freeDisplays.push(i);
+                displaysToClear.push(i);
             }
         }
         
         else {
-            displaysToUpdate[displaysToUpdate.length] = i;
+            displaysToUpdate.push(i);
         }
     }
-    
-    //alert(freeDisplays.length);
     
     if(freeDisplays.length > 0) {
         
@@ -122,6 +155,8 @@ RiceKaraokeShow.prototype.render = function(elapsed) {
             }
             
             timing = this._engine.timings[i];
+            
+            //alert(timing.start + ':' + elapsed + ':' + timing.end);
             
             if(timing.start <= elapsed && timing.end >= elapsed) {
                 freeDisplay = freeDisplays.shift();
@@ -145,7 +180,7 @@ RiceKaraokeShow.prototype.render = function(elapsed) {
                     unfreedDisplays[freeDisplay] = true;
                     
                     this._displays[freeDisplay] = new KaraokeReadyLine(this.getDisplay(freeDisplay), elapsed, timing.start - elapsed);
-                    this._hasReadyLine=true;
+                    this._hasReadyLine = true;
                 }
                 
                 this._relativeLastKaraokeLine = timing.end;
@@ -181,7 +216,7 @@ RiceKaraokeShow.prototype.render = function(elapsed) {
     }
 };
 
-RiceKaraokeShow.prototype.getDisplay = function(displayIndex){
+KaraokeShow.prototype.getDisplay = function(displayIndex){
     return this._displayEngine.getDisplay(displayIndex);
 };
 
@@ -204,35 +239,48 @@ function KaraokeLine(display, elapsed, timing) {
 
 KaraokeLine.prototype.update = function(elapsed){
     var passedFragments = [];
+    var upcomingFragments = [];
+    
     var currentFragmentPercent = 0.0;
     var currentFragment = null;
-    var upcomingFragments = [];
     
     var fragment;
     var fragmentEnd;
     
-    for(var l = 0; l < this._timing.line.length; l ++){
-        fragment = this._timing.line[l];
-        
-        if(this._timing.start + fragment.start <= elapsed){
+    var time;
+
+    //alert('');
+    for(var i = 0; i < this._timing.line.length; i ++){
+        fragment = this._timing.line[i];
+
+        time = this._timing.start + fragment.start;
+        time = Math.floor(time * 100) / 100;
+
+        if (i == this._timing.line.length - 1) {
+            //alert(time + ':' + elapsed);
+        }
+
+        //if(this._timing.start + fragment.start <= elapsed){
+        if(time <= elapsed) {
         	
             if(currentFragment != null) {
-                passedFragments[passedFragments.length] = currentFragment;
+                passedFragments.push(currentFragment);
             }
+
             currentFragment = fragment;
             
-            fragmentEnd = this._timing.line.end ? this._timing.line.end : (this._timing.line.length > l + 1 ? this._timing.line[l + 1].start : this._timing.end - this._timing.start);
+            fragmentEnd = this._timing.line.end ? this._timing.line.end : (this._timing.line.length > i + 1 ? this._timing.line[i + 1].start : this._timing.end - this._timing.start);
             
-            currentFragmentPercent = 10 + (elapsed - (this._timing.start + fragment.start))/(fragmentEnd - fragment.start) * 100;
+            currentFragmentPercent = (elapsed - time) / (fragmentEnd - fragment.start) * 100;
             
         } else {
-            upcomingFragments[upcomingFragments.length] = fragment;
+            upcomingFragments.push(fragment);
+        }
+
+        if (i == this._timing.line.length - 1 && time <= elapsed) {    
+            alert(time + '  :  ' + elapsed + '  :  ' + upcomingFragments.length);   
         }
     }
-    
-    if (currentFragmentPercent > 100) {
-    	currentFragmentPercent = 100;
-    }	
     
     this._display.renderKaraoke(passedFragments, currentFragment, upcomingFragments, currentFragmentPercent);
     return true;

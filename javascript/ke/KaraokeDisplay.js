@@ -87,9 +87,16 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
         upcomingText += upcoming[i].text;
     }
     
+    if (upcomingText == '') {
+        //alert('right');
+    }
+    //alert(upcomingText);
+
     var content = passedText + current.text + upcomingText;
     var strippedCurrentText = current.text.replace(/^\s+/,'');
-    
+
+    //alert(current.text);
+
     this._setClass();
     
     var test = jQuery('<div style="display: inline; visibility: hidden; '+'margin: 0; padding: 0; border: 0"></div>');

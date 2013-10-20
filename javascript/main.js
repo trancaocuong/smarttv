@@ -4,6 +4,7 @@ var tvKey 		= new Common.API.TVKeyValue();
 
 var Main = {};
 var dataProvider = new LyricsDataProvider();
+var karaoke;
 
 Main.onUnload = function() {	
 	if (Player) {
@@ -60,9 +61,24 @@ function loadLyrics() {
 function onGetConfigHandler(responseText) {
 	//alert(responseText);
 	
-	var lines = responseText.split("\r\n");	
-	for (var i = 0; i < lines.length; i ++) {
-		dataProvider.addLineData(lines[i]);
+	var lines = responseText.split("\r\n");
+	
+	//to make sure no empty line
+	var count = 0;
+	while(count < lines.length) {
+		if ($.trim(lines[count]) == '') {
+			lines.splice(count, 1);
+		} else{
+			count ++;
+		}
+	}
+
+	//add line to data provider
+	var len = lines.length;
+	for (var i = 0; i < len; i ++) {
+		if ($.trim(lines[i]) != '') {
+			dataProvider.addLineData(lines[i], (i == (len - 1)) ? true : false);
+		}	
 	}
     
     Main.initKaraoke();	
@@ -187,7 +203,7 @@ Main.onCompletePlayVideoHandler = function() {
 Main.onKeyHandler = function(event) {
 
 	var keyCode = event.keyCode;
-	alert(keyCode);
+	//alert(keyCode);
 	
 	if (keyCode == TVKey.KEY_EXIT || keyCode == TVKey.KEY_RETURN) {
         widgetAPI.blockNavigation(event);        
@@ -242,20 +258,15 @@ Main.returnApp = function() {
 	widgetAPI.sendReturnEvent();
 };
 
-var karaoke;
-var renderer;
-var show;
-
 Main.initKaraoke = function() {
 	var timings = dataProvider.toArray();
 
-	karaoke = new RiceKaraoke(RiceKaraoke.toTiming(timings));
-	renderer = new KaraokeDisplayEngine('karaoke-display', 2);
-	show = karaoke.createShow(renderer, 2);
+	karaoke = new Karaoke(timings);
+	karaoke.init('karaoke-display', 2);
 };
 
 Main.onPlayingAudioHandler = function(time) {
-	show.render(time / 1000);
+	//show.render(time / 1000);
 };
 
 
@@ -270,7 +281,7 @@ Main.startLyrics = function() {
         //    show.reset();
         //}
         
-        //show.render(count * delay / 1000);
+        karaoke.render(count * delay / 1000);
         //lastPosition = count * delay;
         
         //alert(count * delay / 1000);
