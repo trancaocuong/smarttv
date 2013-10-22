@@ -43,6 +43,9 @@ Player.init = function(playerID) {
     
     this.plugin.OnCurrentPlayTime = 'Player.OnCurrentPlayTime';
     
+    this.plugin.SetTotalBufferSize(0.5 * 1024 * 1024); // 1MB
+    //this.plugin.SetInitialBufferSize(1048576/2); // 0.5MB
+    
     return success;
 };
 

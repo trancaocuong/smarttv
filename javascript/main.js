@@ -82,6 +82,9 @@ function onGetConfigHandler(responseText) {
 	}
     
     Main.initKaraoke();	
+
+    //Main.startLyrics();
+    
     Main.onCompletePlayAudioHandler();
     Main.onCompletePlayVideoHandler();
 };
@@ -188,16 +191,15 @@ Main.getMp3Path = function(nameFile) {
 };
 
 Main.onCompletePlayAudioHandler = function() {	
-	var url = 'http://vio.akadigital.vn/MP3.mp3';	
+	var url = 'http://kchat.akadigital.vn:90/MP3.mp3';	
 	Player.setVideoURL(url);
 	Player.playVideo();
 };
 
 Main.onCompletePlayVideoHandler = function() {	
-	//var url = 'http://vio.akadigital.vn/MP4.mp4';
-	//var url = 'http://kchat.akadigital.vn:90/karaoke1.mp4';
-	//Video.setVideoURL(url);
-	//Video.playVideo();
+	var url = 'http://kchat.akadigital.vn:90/karaoke1.mp4';
+	Video.setVideoURL(url);
+	Video.playVideo();
 };
 
 Main.onKeyHandler = function(event) {
@@ -266,26 +268,30 @@ Main.initKaraoke = function() {
 };
 
 Main.onPlayingAudioHandler = function(time) {
-	//show.render(time / 1000);
+	//show.render(time / 1000);	
+	document.getElementById('player').innerHTML = 'current time = ' + (time/1000);
 };
 
 
 Main.startLyrics = function() {
 	
 	var count = 0;
-    var delay = 50;
-    //var lastPosition = 0;
+    var delay = 10;
+    var lastPosition = 0;
     
     setInterval(function() {
-        //if (this.position < lastPosition) {
-        //    show.reset();
-        //}
+        
+        if (count * delay < lastPosition) {
+            karaoke.reset();
+        }
         
         karaoke.render(count * delay / 1000);
-        //lastPosition = count * delay;
         
-        //alert(count * delay / 1000);
+        document.getElementById('timeout').innerHTML = 'current time = ' + (count * delay / 1000);
+        
+        lastPosition = count * delay;
         
         count ++;
+
     }, delay);	
 };

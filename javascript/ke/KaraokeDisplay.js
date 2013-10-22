@@ -16,6 +16,11 @@ function KaraokeDisplay(engine, container, displayIndex) {
     
     this._setClass();
     this.clear();
+    
+    this._temp = '';    
+    this.passedTextWidth = 0;
+    this.currentTextWidth = 0;   
+	
 };
 
 //KaraokeDisplay._escapeHTML = function(str){
@@ -87,59 +92,73 @@ KaraokeDisplay.prototype.renderKaraoke = function(passed, current, upcoming, fra
         upcomingText += upcoming[i].text;
     }
     
-    if (upcomingText == '') {
-        //alert('right');
-    }
-    //alert(upcomingText);
-
     var content = passedText + current.text + upcomingText;
+    
+    var isNew = false;
+    if (this._temp != content) {
+    	isNew = true;
+    	this._temp = content;
+    	//alert('SHOW LINE: ' + content);
+    }
+    
     var strippedCurrentText = current.text.replace(/^\s+/,'');
-
-    //alert(current.text);
-
-    this._setClass();
-    
-    var test = jQuery('<div style="display: inline; visibility: hidden; '+'margin: 0; padding: 0; border: 0"></div>');
-    this._element.parent().append(test);
-    
-    var totalTextWidth = test.text(content).width();    
-    var passedTextWidth = test.text(passedText).width();
-    var currentTextWidth = test.text(strippedCurrentText).width();
-    
-    test.remove();
-    
-    var innerElement = jQuery(document.createElement('span'));
-    innerElement.text(content);
-    
-    this._element.empty();
-    this._element.append(innerElement);
-            
-    var pos = innerElement.position();
-    var innerElementLeft = pos.left;
-    var elementHeight = this._element.height();
-   
-    //show hight light text
-    this._removeOverlay();
-    
-    var overlay = jQuery(document.createElement('div'));
-    overlay.attr('class', 'karaoke-overlay');
-    overlay.text(passedText + current.text);
-    overlay.css('position', 'relative');
-    overlay.css('white-space', 'nowrap');
-    overlay.css('overflow', 'hidden');
-    
     //alert(passedText + current.text);
+
+    var test = jQuery('<div style="display: inline; visibility: hidden; '+'margin: 0; padding: 0; border: 0"></div>');
+	this._element.parent().append(test);
+	var totalTextWidth = test.text(content).width();    
+	this.passedTextWidth = test.text(passedText).width();
+	this.currentTextWidth = test.text(strippedCurrentText).width();
+	
+	test.remove();
+	
+    if (isNew) {
+    	this._setClass();
     
-    //fragmentPercent = 100;
+    	var innerElement = jQuery(document.createElement('span'));
+    	innerElement.text(content);
+    	
+    	//test border
+    	//innerElement.css('border', '2px solid white');
     
-    //alert(passedTextWidth + (fragmentPercent/100 * currentTextWidth) + ':'  + currentTextWidth);
+    	this._element.empty();
+    	this._element.append(innerElement);
+    	
+    	//create overlay
+    	this._removeOverlay();
+    	
+    	var pos = innerElement.position();
+        var innerElementLeft = pos.left;
+        var elementHeight = this._element.height();
+    	
+    	var overlay = jQuery(document.createElement('div'));
+        overlay.attr('class', 'karaoke-overlay');
+        overlay.text(content);
+        overlay.css('position', 'relative');
+        overlay.css('white-space', 'nowrap');
+        overlay.css('overflow', 'hidden');
+        
+        //fragmentPercent = 100;
+        overlay.width(this.passedTextWidth + (fragmentPercent/100 * this.currentTextWidth));
+        overlay.css('margin-top', '-' + elementHeight + 'px');
+        //overlay.css('visibility', 'hidden');
+        
+        this._display.append(overlay);
+        overlay.css('left', innerElementLeft - overlay.position().left);
+        //overlay.css('visibility', '');
+        this._overlay = overlay;
+    } 
     
-    overlay.width(passedTextWidth + (fragmentPercent/100 * currentTextWidth));
-    overlay.css('margin-top', '-' + elementHeight + 'px');
-    overlay.css('visibility', 'hidden');
+    else {    
+    	//fragmentPercent = 100;
+    	
+    	//alert(strippedCurrentText);
+    	//this._overlay.text(fragmentPercent);
+    	this._overlay.width(this.passedTextWidth + (fragmentPercent/100 * this.currentTextWidth));
+    	
+    	//alert(fragmentPercent);
+    	//this._overlay.css('left', 0);
+    	//this._overlay.width(totalTextWidth);
+    }
     
-    this._display.append(overlay);
-    overlay.css('left', innerElementLeft - overlay.position().left);
-    overlay.css('visibility', '');
-    this._overlay = overlay;   
 };

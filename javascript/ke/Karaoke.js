@@ -2,13 +2,12 @@
 
     timings = KaraokeUtils.toTiming(timings);
 
-	this.timings = timings;/*.sort(function(a, b) {
+	this.timings = timings.sort(function(a, b) {
         if(a.start == b.start){
 			return 0;
 		}
         return a.start < b.start ? -1 : 1;
 	});
-    */
 
     this.show = null;
 };
@@ -21,6 +20,10 @@ Karaoke.prototype.init = function(displayId, numLines){
 
 Karaoke.prototype.render = function(elapsed){
     this.show.render(elapsed);
+};
+
+Karaoke.prototype.reset = function(){
+    this.show.reset();
 };
 
 
@@ -79,6 +82,7 @@ function KaraokeShow(engine, displayEngine, numLines) {
     this._displayEngine = displayEngine;
     this._numLines = numLines;
     this._displays = [];
+
     this._index = 0;
     this._relativeLastKaraokeLine = 0;
     this._hasReadyLine = false;
@@ -111,6 +115,8 @@ KaraokeShow.prototype.render = function(elapsed) {
 
     //alert('');
     
+    //alert('ELAPSED = ' + elapsed);
+
     for(var i in this._displays) {
 
         if(this._displays[i] == null) {
@@ -118,8 +124,6 @@ KaraokeShow.prototype.render = function(elapsed) {
         }
         
         else if(this._displays[i].end <= elapsed) {
-            
-            //alert(this._displays[i].end + ' ---- ' + elapsed );    
             
             if(this._displays[i] instanceof KaraokeReadyLine) {
                 this._hasReadyLine = false;
@@ -129,10 +133,15 @@ KaraokeShow.prototype.render = function(elapsed) {
                 this._hasInstrumentalLine = false;
             }
             
+            try {
             replacement = this._displays[i].expire(elapsed);
+        } catch(err) {}
             
+            //upcommingline appear here    
             if(replacement != null) {
                 this._displays[i] = replacement;
+                //alert('NEW LINE: ' + this._displays[i]._timing.start + '  -  ' + elapsed);
+                
             } else {
                 freeDisplays.push(i);
                 displaysToClear.push(i);
@@ -145,20 +154,26 @@ KaraokeShow.prototype.render = function(elapsed) {
     }
     
     if(freeDisplays.length > 0) {
-        
+       
         var timing;
         var freeDisplay;
     
         for(var i = this._index; i < this._engine.timings.length; i++) {
+            
             if(freeDisplays.length == 0){
+                //alert('NO DISPLAY');
                 break;
             }
             
             timing = this._engine.timings[i];
             
-            //alert(timing.start + ':' + elapsed + ':' + timing.end);
+            //if (timing.end == elapsed) {
+            //    alert('END OF LINE:' + timing.end);
+            //}
+
+            //alert(i + ':' + timing.start + ':' + elapsed + ':' + timing.end);
             
-            if(timing.start <= elapsed && timing.end >= elapsed) {
+            if(timing.start <= elapsed && elapsed <= timing.end) {
                 freeDisplay = freeDisplays.shift();
                 
                 unfreedDisplays[freeDisplay] = true;
@@ -166,6 +181,10 @@ KaraokeShow.prototype.render = function(elapsed) {
                 this._displays[freeDisplay] = new KaraokeLine(this.getDisplay(freeDisplay), elapsed, timing);
                 this._relativeLastKaraokeLine = timing.end;
                 this._index = i + 1;
+
+                //if (timing.end == elapsed) {
+                //    alert('END OF LINE:' + timing.end);
+                //}
             }
             
             else if((timing.start - this.upcomingThreshold <= elapsed || timing.start - this._relativeLastKaraokeLine < this.antiFlickerThreshold) && timing.end >= elapsed){
@@ -211,6 +230,7 @@ KaraokeShow.prototype.render = function(elapsed) {
     
     if(displaysToUpdate.length > 0) {
         for(var i in displaysToUpdate) {
+            //alert(i + ':' + displaysToUpdate[i]);
             this._displays[displaysToUpdate[i]].update(elapsed);
         }
     }
@@ -250,15 +270,14 @@ KaraokeLine.prototype.update = function(elapsed){
     var time;
 
     //alert('');
+    
     for(var i = 0; i < this._timing.line.length; i ++){
         fragment = this._timing.line[i];
 
         time = this._timing.start + fragment.start;
         time = Math.floor(time * 100) / 100;
 
-        if (i == this._timing.line.length - 1) {
-            //alert(time + ':' + elapsed);
-        }
+        //alert(time + ':' + elapsed);
 
         //if(this._timing.start + fragment.start <= elapsed){
         if(time <= elapsed) {
@@ -277,11 +296,15 @@ KaraokeLine.prototype.update = function(elapsed){
             upcomingFragments.push(fragment);
         }
 
-        if (i == this._timing.line.length - 1 && time <= elapsed) {    
-            alert(time + '  :  ' + elapsed + '  :  ' + upcomingFragments.length);   
+        if (i == this._timing.line.length - 1 && time == elapsed) {    
+            //alert('');
+            //alert('END LINE: ' + elapsed);   
         }
     }
     
+    currentFragmentPercent = Math.ceil(currentFragmentPercent);
+
+    //alert(currentFragmentPercent);
     this._display.renderKaraoke(passedFragments, currentFragment, upcomingFragments, currentFragmentPercent);
     return true;
 };

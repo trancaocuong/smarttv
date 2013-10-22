@@ -37,6 +37,9 @@ Video.init = function(videoID) {
     this.plugin.OnStreamNotFound = 'Video.StreamNotFound';
     this.plugin.OnRenderingComplete = 'Video.OnRenderingComplete';     
     
+    this.plugin.SetTotalBufferSize(5 * 1024 * 1024); // 5MB
+    //this.plugin.SetInitialBufferSize(2 * 1024 * 1024); // 2MB
+    
     return success;
 };
 
